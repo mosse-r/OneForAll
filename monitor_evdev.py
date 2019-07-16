@@ -20,7 +20,6 @@
 # along with this repo. If not, see <http://www.gnu.org/licenses/>.
 #
 import Adafruit_ADS1x15
-import RPi.GPIO as gpio
 import configparser
 import logging
 import logging.handlers
@@ -30,7 +29,6 @@ import signal
 import sys
 import thread as thread
 import time
-import uinput
 # from evdev import uinput, UInput, AbsInfo, categorize, ecodes as e
 from subprocess import Popen, PIPE, check_output, check_call
 from threading import Event
@@ -111,48 +109,46 @@ HOTKEYS = [LEFT, RIGHT, DOWN, UP, BUTTON_A]
 BOUNCE_TIME = 0.03  # Debounce time in seconds
 
 # GPIO Init
-gpio.setwarnings(False)
-gpio.setmode(gpio.BCM)
-gpio.setup(BUTTONS, gpio.IN, pull_up_down=gpio.PUD_UP)
+#gpio.setwarnings(False)
+#gpio.setmode(gpio.BCM)
+#gpio.setup(BUTTONS, gpio.IN, pull_up_down=gpio.PUD_UP)
 
-if not SHUTDOWN == -1:
-    gpio.setup(SHUTDOWN, gpio.IN, pull_up_down=gpio.PUD_UP)
 
-if JOYSTICK_DISABLED == 'False':
-    KEYS = {  # EDIT KEYCODES IN THIS TABLE TO YOUR PREFERENCES:
-        # See /usr/include/linux/input.h for keycode names
-        BUTTON_A: uinput.BTN_A,  # 'A' button
-        BUTTON_B: uinput.BTN_B,  # 'B' button
-        BUTTON_X: uinput.BTN_X,  # 'X' button
-        BUTTON_Y: uinput.BTN_Y,  # 'Y' button
-        BUTTON_L1: uinput.BTN_TL,  # 'L1' button
-        BUTTON_R1: uinput.BTN_TR,  # 'R1' button
-        SELECT: uinput.BTN_SELECT,  # 'Select' button
-        START: uinput.BTN_START,  # 'Start' button
-        UP: uinput.BTN_DPAD_UP,  # Analog up
-        DOWN: uinput.BTN_DPAD_DOWN,  # Analog down
-        LEFT: uinput.BTN_DPAD_LEFT,  # Analog left
-        RIGHT: uinput.BTN_DPAD_RIGHT,  # Analog right
-        10001: uinput.ABS_X + (0, VREF, 0, 0),
-        10002: uinput.ABS_Y + (0, VREF, 0, 0),
-    }
-else:
-    KEYS = {  # EDIT KEYCODES IN THIS TABLE TO YOUR PREFERENCES:
-        # See /usr/include/linux/input.h for keycode names
-        BUTTON_A: uinput.KEY_LEFTCTRL,  # 'A' button
-        BUTTON_B: uinput.KEY_LEFTALT,  # 'B' button
-        BUTTON_X: uinput.KEY_Z,  # 'X' button
-        BUTTON_Y: uinput.KEY_X,  # 'Y' button
-        BUTTON_L1: uinput.KEY_G,  # 'L1' button
-        BUTTON_R1: uinput.KEY_H,  # 'R1' button
-        SELECT: uinput.KEY_SPACE,  # 'Select' button
-        START: uinput.KEY_ENTER,  # 'Start' button
-        UP: uinput.KEY_UP,  # Analog up
-        DOWN: uinput.KEY_DOWN,  # Analog down
-        LEFT: uinput.KEY_LEFT,  # Analog left
-        RIGHT: uinput.KEY_RIGHT,  # Analog right
-        SHOW_OSD_KEY: uinput.KEY_LEFTSHIFT,
-    }
+#if JOYSTICK_DISABLED == 'False':
+#    KEYS = {  # EDIT KEYCODES IN THIS TABLE TO YOUR PREFERENCES:
+#        # See /usr/include/linux/input.h for keycode names
+#        BUTTON_A: uinput.BTN_A,  # 'A' button
+#        BUTTON_B: uinput.BTN_B,  # 'B' button
+#        BUTTON_X: uinput.BTN_X,  # 'X' button
+#        BUTTON_Y: uinput.BTN_Y,  # 'Y' button
+#        BUTTON_L1: uinput.BTN_TL,  # 'L1' button
+#        BUTTON_R1: uinput.BTN_TR,  # 'R1' button
+#        SELECT: uinput.BTN_SELECT,  # 'Select' button
+#        START: uinput.BTN_START,  # 'Start' button
+#        UP: uinput.BTN_DPAD_UP,  # Analog up
+#        DOWN: uinput.BTN_DPAD_DOWN,  # Analog down
+#        LEFT: uinput.BTN_DPAD_LEFT,  # Analog left
+#        RIGHT: uinput.BTN_DPAD_RIGHT,  # Analog right
+#        10001: uinput.ABS_X + (0, VREF, 0, 0),
+#        10002: uinput.ABS_Y + (0, VREF, 0, 0),
+#    }
+#else:
+#    KEYS = {  # EDIT KEYCODES IN THIS TABLE TO YOUR PREFERENCES:
+#        # See /usr/include/linux/input.h for keycode names
+#        BUTTON_A: uinput.KEY_LEFTCTRL,  # 'A' button
+#        BUTTON_B: uinput.KEY_LEFTALT,  # 'B' button
+#        BUTTON_X: uinput.KEY_Z,  # 'X' button
+#        BUTTON_Y: uinput.KEY_X,  # 'Y' button
+#        BUTTON_L1: uinput.KEY_G,  # 'L1' button
+#        BUTTON_R1: uinput.KEY_H,  # 'R1' button
+#        SELECT: uinput.KEY_SPACE,  # 'Select' button
+#        START: uinput.KEY_ENTER,  # 'Start' button
+#        UP: uinput.KEY_UP,  # Analog up
+#        DOWN: uinput.KEY_DOWN,  # Analog down
+#        LEFT: uinput.KEY_LEFT,  # Analog left
+#        RIGHT: uinput.KEY_RIGHT,  # Analog right
+#        SHOW_OSD_KEY: uinput.KEY_LEFTSHIFT,
+#    }
 
 # Global Variables
 
@@ -190,76 +186,76 @@ else:
     adc = False
 
 # Create virtual HID for Joystick
-if JOYSTICK_DISABLED == 'False':
-    device = uinput.Device(KEYS.values(), name="OneForAll-GP", version=0x3)
-else:
-    device = uinput.Device(KEYS.values(), name="OneForAll", version=0x3)
+#if JOYSTICK_DISABLED == 'False':
+#    device = uinput.Device(KEYS.values(), name="OneForAll-GP", version=0x3)
+#else:
+#    device = uinput.Device(KEYS.values(), name="OneForAll", version=0x3)
 
 time.sleep(1)
 
 
-def hotkeyAction(key):
-    if not gpio.input(SHOW_OSD_KEY):
-        if key in HOTKEYS:
-            return True
-
-    return False
-
-
-def handle_button(pin):
-    global showOverlay
-    time.sleep(BOUNCE_TIME)
-    state = 0 if gpio.input(pin) else 1
-
-    if pin == SHOW_OSD_KEY:
-        if state == 1:
-            showOverlay = True
-            try:
-                checkKeyInputPowerSaving()
-            except Exception:
-                pass
-        else:
-            showOverlay = False
-            try:
-                checkKeyInputPowerSaving()
-            except Exception:
-                pass
-
-    if not hotkeyAction(pin):
-        key = KEYS[pin]
-        device.emit(key, state)
-        time.sleep(BOUNCE_TIME)
-        device.syn()
-    else:
-        checkKeyInputPowerSaving()
-
-    logging.debug("Pin: {}, KeyCode: {}, Event: {}".format(pin, key, 'press' if state else 'release'))
-
-
-def handle_shutdown(pin):
-    state = 0 if gpio.input(pin) else 1
-    if (state):
-        logging.info("SHUTDOWN")
-        doShutdown()
+#def hotkeyAction(key):
+#    if not gpio.input(SHOW_OSD_KEY):
+#        if key in HOTKEYS:
+#            return True
+#
+#    return False
+#
+#
+#def handle_button(pin):
+#    global showOverlay
+#    time.sleep(BOUNCE_TIME)
+#    state = 0 if gpio.input(pin) else 1
+#
+#    if pin == SHOW_OSD_KEY:
+#        if state == 1:
+#            showOverlay = True
+#            try:
+#                checkKeyInputPowerSaving()
+#            except Exception:
+#                pass
+#        else:
+#            showOverlay = False
+#            try:
+#                checkKeyInputPowerSaving()
+#            except Exception:
+#                pass
+#
+#    if not hotkeyAction(pin):
+#        key = KEYS[pin]
+#        device.emit(key, state)
+#        time.sleep(BOUNCE_TIME)
+#        device.syn()
+#    else:
+#        checkKeyInputPowerSaving()
+#
+#    logging.debug("Pin: {}, KeyCode: {}, Event: {}".format(pin, key, 'press' if state else 'release'))
 
 
-# Initialise Safe shutdown
-if not SHUTDOWN == -1:
-    gpio.add_event_detect(SHUTDOWN, gpio.BOTH, callback=handle_shutdown, bouncetime=1)
+#def handle_shutdown(pin):
+#    state = 0 if gpio.input(pin) else 1
+#    if (state):
+#        logging.info("SHUTDOWN")
+#        doShutdown()
 
-# Initialise Buttons
-for button in BUTTONS:
-    gpio.add_event_detect(button, gpio.BOTH, callback=handle_button, bouncetime=1)
-    logging.debug("Button: {}".format(button))
 
-if not SHOW_OSD_KEY in BUTTONS:
-    if SHOW_OSD_KEY != -1:
-        gpio.setup(SHOW_OSD_KEY, gpio.IN, pull_up_down=gpio.PUD_UP)
-        gpio.add_event_detect(SHOW_OSD_KEY, gpio.BOTH, callback=handle_button, bouncetime=1)
-
-# Send centering commands
-device.emit(uinput.ABS_X, VREF / 2, syn=False);
-device.emit(uinput.ABS_Y, VREF / 2);
+## Initialise Safe shutdown
+#if not SHUTDOWN == -1:
+#    gpio.add_event_detect(SHUTDOWN, gpio.BOTH, callback=handle_shutdown, bouncetime=1)
+#
+## Initialise Buttons
+#for button in BUTTONS:
+#    gpio.add_event_detect(button, gpio.BOTH, callback=handle_button, bouncetime=1)
+#    logging.debug("Button: {}".format(button))
+#
+#if not SHOW_OSD_KEY in BUTTONS:
+#    if SHOW_OSD_KEY != -1:
+#        gpio.setup(SHOW_OSD_KEY, gpio.IN, pull_up_down=gpio.PUD_UP)
+#        gpio.add_event_detect(SHOW_OSD_KEY, gpio.BOTH, callback=handle_button, bouncetime=1)
+#
+## Send centering commands
+#device.emit(uinput.ABS_X, VREF / 2, syn=False);
+#device.emit(uinput.ABS_Y, VREF / 2);
 
 # Set up OSD service
 try:
@@ -325,38 +321,40 @@ def readVolumeLevel():
 # Read wifi (Credits: kite's SAIO project) Modified to only read, not set wifi.
 def readModeWifi(toggle=False):
     ret = 0;
-    wifiVal = not os.path.exists(osd_path + 'wifi')  # int(ser.readline().rstrip('\r\n'))
-    if toggle:
-        wifiVal = not wifiVal
-    global wifi_state
-    if (wifiVal):
-        if os.path.exists(osd_path + 'wifi'):
-            os.remove(osd_path + 'wifi')
-        if (wifi_state != 'ON'):
-            wifi_state = 'ON'
-            logging.info("Wifi    [ENABLING]")
-            try:
-                out = check_output(['sudo', rfkill_path, 'unblock', 'wifi'])
-                logging.info("Wifi    [" + str(out) + "]")
-            except Exception as e:
-                logging.info("Wifi    : " + str(e))
-                ret = wifi_warning  # Get signal strength
+   # wifiVal = not os.path.exists(osd_path + 'wifi')  # int(ser.readline().rstrip('\r\n'))
+   # if toggle:
+   #     wifiVal = not wifiVal
+   # global wifi_state
+   # if (wifiVal):
+   #     if os.path.exists(osd_path + 'wifi'):
+   #         os.remove(osd_path + 'wifi')
+   #     if (wifi_state != 'ON'):
+   #         wifi_state = 'ON'
+   #         logging.info("Wifi    [ENABLING]")
+   #         try:
+   #             out = check_output(['sudo', rfkill_path, 'unblock', 'wifi'])
+   #             logging.info("Wifi    [" + str(out) + "]")
+   #         except Exception as e:
+   #             logging.info("Wifi    : " + str(e))
+   #             ret = wifi_warning  # Get signal strength
 
-    else:
-        with open(osd_path + 'wifi', 'a'):
-            n = 1
-        if (wifi_state != 'OFF'):
-            wifi_state = 'OFF'
-            logging.info("Wifi    [DISABLING]")
-            try:
-                out = check_output(['sudo', rfkill_path, 'block', 'wifi'])
-                logging.info("Wifi    [" + str(out) + "]")
-            except Exception as e:
-                logging.info("Wifi    : " + str(e))
-                ret = wifi_error
-        return ret
+   # else:
+   #     with open(osd_path + 'wifi', 'a'):
+   #         n = 1
+   #     if (wifi_state != 'OFF'):
+   #         wifi_state = 'OFF'
+   #         logging.info("Wifi    [DISABLING]")
+   #         try:
+   #             out = check_output(['sudo', rfkill_path, 'block', 'wifi'])
+   #             logging.info("Wifi    [" + str(out) + "]")
+   #         except Exception as e:
+   #             logging.info("Wifi    : " + str(e))
+   #             ret = wifi_error
+   #     return ret
     # check signal
     raw = check_output(['cat', '/proc/net/wireless'])
+    if raw.find("wlan0") ==  -1:
+        return wifi_off
     strengthObj = re.search(r'.wlan0: \d*\s*(\d*)\.\s*[-]?(\d*)\.', raw, re.I)
     if strengthObj:
         strength = 0
@@ -380,37 +378,37 @@ def readModeWifi(toggle=False):
 
 
 def readModeBluetooth(toggle=False):
-    ret = 0;
-    BtVal = not os.path.exists(osd_path + 'bluetooth')  # int(ser.readline().rstrip('\r\n'))
-    if toggle:
-        BtVal = not BtVal
-    global bt_state
-    if (BtVal):
-        if os.path.exists(osd_path + 'bluetooth'):
-            os.remove(osd_path + 'bluetooth')
-        if (bt_state != 'ON'):
-            bt_state = 'ON'
-            logging.info("BT    [ENABLING]")
-            try:
-                out = check_output(['sudo', rfkill_path, 'unblock', 'bluetooth'])
-                logging.info("BT      [" + str(out) + "]")
-            except Exception as e:
-                logging.info("BT    : " + str(e))
-                ret = wifi_warning  # Get signal strength
+    #ret = 0;
+    #BtVal = not os.path.exists(osd_path + 'bluetooth')  # int(ser.readline().rstrip('\r\n'))
+    #if toggle:
+    #    BtVal = not BtVal
+    #global bt_state
+    #if (BtVal):
+    #    if os.path.exists(osd_path + 'bluetooth'):
+    #        os.remove(osd_path + 'bluetooth')
+    #    if (bt_state != 'ON'):
+    #        bt_state = 'ON'
+    #        logging.info("BT    [ENABLING]")
+    #        try:
+    #            out = check_output(['sudo', rfkill_path, 'unblock', 'bluetooth'])
+    #            logging.info("BT      [" + str(out) + "]")
+    #        except Exception as e:
+    #            logging.info("BT    : " + str(e))
+    #            ret = wifi_warning  # Get signal strength
 
-    else:
-        with open(osd_path + 'bluetooth', 'a'):
-            n = 1
-        if (bt_state != 'OFF'):
-            bt_state = 'OFF'
-            logging.info("BT    [DISABLING]")
-            try:
-                out = check_output(['sudo', rfkill_path, 'block', 'bluetooth'])
-                logging.info("BT      [" + str(out) + "]")
-            except Exception as e:
-                logging.info("BT    : " + str(e))
-                ret = wifi_error
-        return ret
+    #else:
+    #    with open(osd_path + 'bluetooth', 'a'):
+    #        n = 1
+    #    if (bt_state != 'OFF'):
+    #        bt_state = 'OFF'
+    #        logging.info("BT    [DISABLING]")
+    #        try:
+    #            out = check_output(['sudo', rfkill_path, 'block', 'bluetooth'])
+    #            logging.info("BT      [" + str(out) + "]")
+    #        except Exception as e:
+    #            logging.info("BT    : " + str(e))
+    #            ret = wifi_error
+    #    return ret
     # check if it's enabled
     raw = check_output(['hcitool', 'dev'])
     return True if raw.find("hci0") > -1 else False
@@ -485,26 +483,8 @@ def checkKeyInputPowerSaving():
     global volt
     global showOverlay
 
-    info = showOverlay
-    overrideCounter.set()
-
-    # TODO Convert to state
-    if not gpio.input(SHOW_OSD_KEY):
-        if not gpio.input(UP):
-            volumeUp()
-            time.sleep(0.5)
-        elif not gpio.input(DOWN):
-            volumeDown()
-            time.sleep(0.5)
-        elif not gpio.input(LEFT):
-            wifi = readModeWifi(True)
-            time.sleep(0.5)
-        elif not gpio.input(RIGHT):
-            joystick = not joystick
-            time.sleep(0.5)
-        elif not gpio.input(BUTTON_A):
-            bluetooth = readModeBluetooth(True)
-            time.sleep(0.5)
+    wifi = readModeWifi()
+    bluetooth = readModeBluetooth()
 
 
 def checkJoystickInput():
@@ -530,7 +510,7 @@ def checkJoystickInput():
 
 
 def exit_gracefully(signum=None, frame=None):
-    gpio.cleanup
+#    gpio.cleanup
     osd_proc.terminate()
     sys.exit(0)
 
@@ -544,8 +524,8 @@ volume = readVolumeLevel()
 wifi = readModeWifi()
 bluetooth = bluetooth = readModeBluetooth()
 
-if JOYSTICK_DISABLED == 'False':
-    inputReadingThread = thread.start_new_thread(inputReading, ())
+#if JOYSTICK_DISABLED == 'False':
+#    inputReadingThread = thread.start_new_thread(inputReading, ())
 
 try:
     while 1:
@@ -554,6 +534,8 @@ try:
                 volt = readVoltage()
                 bat = getVoltagepercent(volt)
             checkShdn(volt)
+            checkKeyInputPowerSaving()
+            print 'wifi:', wifi
             updateOSD(volt, bat, 20, wifi, volume, lowbattery, info, charge, bluetooth)
             overrideCounter.wait(10)
             if overrideCounter.is_set():
